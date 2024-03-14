@@ -42,6 +42,30 @@ class HoistingTests: RulesTests {
                        exclude: ["hoistAwait"])
     }
 
+    func testHoistTryAfterMultilineString() {
+        let input = """
+        let foo = \"\"\"
+        multiline
+        test
+        \"\"\"
+
+        bar(try test(foo), "test")
+        """
+
+        let output = """
+        let foo = \"\"\"
+        multiline
+        test
+        \"\"\"
+
+        try bar(test(foo), "test")
+        """
+
+        testFormatting(for: input, output, rule: FormatRules.hoistTry,
+                       options: FormatOptions(swiftVersion: "5.5"),
+                       exclude: ["hoistAwait"])
+    }
+
     func testHoistTryInsideStringInterpolation3() {
         let input = """
         let text = "\""
